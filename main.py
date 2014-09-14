@@ -1,3 +1,6 @@
+import operator
+
+
 def pitch_parser(iterable):
     """
     Takes an iterable containing PITCH messages and returns a dictionary
@@ -37,3 +40,10 @@ def pitch_parser(iterable):
                     order_data['shares'] -= exc_shares
 
     return volume
+
+
+def extract_top_ten_symbols_from_volume(volume):
+    sorted_volume = sorted(
+        volume.iteritems(), key=operator.itemgetter(1), reverse=True
+    )
+    return tuple(sorted_volume[:10])

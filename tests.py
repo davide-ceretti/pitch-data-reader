@@ -1,7 +1,7 @@
 import unittest
 from collections import OrderedDict
 
-from main import pitch_parser
+from main import pitch_parser, extract_top_ten_symbols_from_volume
 
 
 def create_add_order(**kwargs):
@@ -152,6 +152,86 @@ class TestPitchParser(unittest.TestCase):
 
         expected = {}
         self.assertDictEqual(result, expected)
+
+
+class TestExtractTopTenSymbolsFromVolume(unittest.TestCase):
+    def _make_orders(self, initial_data):
+        data = []
+        for order_id, stock_symbol, shares in initial_data:
+            add_order = create_add_order(
+                stock_symbol=stock_symbol, order_id=order_id, shares=shares
+            )
+            exec_order = create_execute_order(
+                order_id=order_id, exec_shares=shares
+            )
+            data.append(add_order)
+            data.append(exec_order)
+        return data
+
+    def test_empty_volume(self):
+        data = []
+        volume = pitch_parser(data)
+
+        result = extract_top_ten_symbols_from_volume(volume)
+
+        expected = ()
+        self.assertTupleEqual(result, expected)
+
+    def test_volume_size_smaller_than_ten(self):
+        args = [
+            ('000000000001', 'DAV001', '100000'),
+            ('000000000002', 'DAV002', '200000'),
+            ('000000000003', 'DAV003', '010000'),
+        ]
+
+        volume = pitch_parser(self._make_orders(args))
+
+        result = extract_top_ten_symbols_from_volume(volume)
+
+        expected = (
+            ('DAV002', 200000),
+            ('DAV001', 100000),
+            ('DAV003', 10000),
+        )
+        self.assertTupleEqual(result, expected)
+
+    def test_volume_size_greater_than_ten(self):
+        args = [
+            ('000000000001', 'DAV001', '100000'),
+            ('000000000002', 'DAV002', '200000'),
+            ('000000000003', 'DAV003', '010000'),
+            ('000000000004', 'DAV004', '900000'),
+            ('000000000005', 'DAV005', '100001'),
+            ('000000000006', 'DAV006', '200001'),
+            ('000000000007', 'DAV007', '010001'),
+            ('000000000008', 'DAV008', '900001'),
+            ('000000000009', 'DAV009', '100002'),
+            ('000000000010', 'DAV010', '200002'),
+            ('000000000011', 'DAV011', '010002'),
+            ('000000000012', 'DAV012', '900002'),
+            ('000000000013', 'DAV013', '000001'),
+            ('000000000014', 'DAV014', '999999'),
+        ]
+
+        volume = pitch_parser(self._make_orders(args))
+
+        result = extract_top_ten_symbols_from_volume(volume)
+
+        expected = (
+            ('DAV014', 999999),
+            ('DAV012', 900002),
+            ('DAV008', 900001),
+            ('DAV004', 900000),
+            ('DAV010', 200002),
+            ('DAV006', 200001),
+            ('DAV002', 200000),
+            ('DAV009', 100002),
+            ('DAV005', 100001),
+            ('DAV001', 100000),
+
+        )
+        self.assertTupleEqual(result, expected)
+
 
 if __name__ == "__main__":
     unittest.main()
