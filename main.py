@@ -12,7 +12,7 @@ def pitch_parser(iterable):
             shares = message[22:28]
             order_id = message[9:21]
             data = {
-                'shares': shares,
+                'shares': int(shares),
                 'stock_symbol': stock_symbol
             }
             add_orders[order_id] = data
@@ -21,9 +21,14 @@ def pitch_parser(iterable):
             order_id = message[9:21]
             order_data = add_orders[order_id]
             stock_symbol = order_data['stock_symbol']
+            shares = order_data['shares']
             if stock_symbol not in volume:
-                volume[stock_symbol] = exc_shares
+                if exc_shares <= shares:
+                    volume[stock_symbol] = exc_shares
+                    order_data['shares'] -= exc_shares
             else:
-                volume[stock_symbol] += exc_shares
+                if exc_shares <= shares:
+                    volume[stock_symbol] += exc_shares
+                    order_data['shares'] -= exc_shares
 
     return volume

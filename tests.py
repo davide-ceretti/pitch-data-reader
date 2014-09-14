@@ -99,5 +99,34 @@ class TestPitchParser(unittest.TestCase):
         expected = {"DAV": 110}
         self.assertDictEqual(result, expected)
 
+    def test_add_order_and_execute_order_multiple_times(self):
+        data = [
+            create_add_order(
+                stock_symbol='DAV   ', order_id='QQQWWWEEERRR', shares='000200'
+            ),
+            create_execute_order(order_id='QQQWWWEEERRR', exec_shares='000110'),
+            create_execute_order(order_id='QQQWWWEEERRR', exec_shares='000003'),
+            create_execute_order(order_id='QQQWWWEEERRR', exec_shares='000005')
+        ]
+
+        result = pitch_parser(data)
+
+        expected = {"DAV": 118}
+        self.assertDictEqual(result, expected)
+
+    def test_add_order_and_execute_order_over_limit(self):
+        data = [
+            create_add_order(
+                stock_symbol='DAV   ', order_id='QQQWWWEEERRR', shares='000200'
+            ),
+            create_execute_order(order_id='QQQWWWEEERRR', exec_shares='000110'),
+            create_execute_order(order_id='QQQWWWEEERRR', exec_shares='000091'),
+        ]
+
+        result = pitch_parser(data)
+
+        expected = {"DAV": 110}
+        self.assertDictEqual(result, expected)
+
 if __name__ == "__main__":
     unittest.main()
