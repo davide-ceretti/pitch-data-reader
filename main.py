@@ -1,4 +1,5 @@
 import operator
+import argparse
 
 
 def pitch_parser(iterable):
@@ -43,7 +44,28 @@ def pitch_parser(iterable):
 
 
 def extract_top_ten_symbols_from_volume(volume):
+    """
+    Takes a volume and returns a tuple of the first ten symbols by
+    executed volume
+    """
     sorted_volume = sorted(
         volume.iteritems(), key=operator.itemgetter(1), reverse=True
     )
     return tuple(sorted_volume[:10])
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Extract PITCH data')
+    parser.add_argument(
+        'filename',
+        type=str,
+        help='The name of the file containg PITCH data'
+    )
+
+    args = parser.parse_args()
+
+    with open(args.filename, 'r') as f:
+        volume = pitch_parser(f)
+        top_ten = extract_top_ten_symbols_from_volume(volume)
+        for symbol, value in top_ten:
+            print "{} {}".format(symbol, value)
