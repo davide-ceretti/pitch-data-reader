@@ -21,7 +21,10 @@ def pitch_parser(iterable):
         if message_type == 'E':
             exc_shares = int(message[21:27])
             order_id = message[9:21]
-            order_data = add_orders[order_id]
+            try:
+                order_data = add_orders[order_id]
+            except KeyError:
+                continue
             stock_symbol = order_data['stock_symbol']
             shares = order_data['shares']
             if stock_symbol not in volume:
