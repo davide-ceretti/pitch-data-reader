@@ -6,6 +6,8 @@ def pitch_parser(iterable):
     add_orders = {}
     volume = {}
     for message in iterable:
+        if message[0] == 'S':
+            message = message[1:]
         message_type = message[8]
         if message_type == 'A':
             stock_symbol = message[28:34].replace(' ', '')

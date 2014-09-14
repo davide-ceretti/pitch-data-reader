@@ -6,6 +6,7 @@ from main import pitch_parser
 
 def create_add_order(**kwargs):
     defaults = [
+        ('prefix', 'S'),
         ('timestamp', "28800011"),
         ('msg_type', "A"),
         ('order_id', "AK27GA0000DT"),
@@ -24,6 +25,7 @@ def create_add_order(**kwargs):
 
 def create_execute_order(**kwargs):
     defaults = [
+        ('prefix', 'S'),
         ('timestamp', "28800011"),
         ('msg_type', "E"),
         ('order_id', "AK27GA0000DT"),
@@ -43,7 +45,7 @@ class TestUtils(unittest.TestCase):
 
         self.assertEqual(
             order,
-            "28800011AAK27GA0000DTS000100SH    0000619200Y"
+            "S28800011AAK27GA0000DTS000100SH    0000619200Y"
         )
 
     def test_create_add_order_override_shares(self):
@@ -51,7 +53,7 @@ class TestUtils(unittest.TestCase):
 
         self.assertEqual(
             order,
-            "28800011AAK27GA0000DTS999999SH    0000619200Y"
+            "S28800011AAK27GA0000DTS999999SH    0000619200Y"
         )
 
     def test_create_execute_order_default(self):
@@ -59,7 +61,7 @@ class TestUtils(unittest.TestCase):
 
         self.assertEqual(
             order,
-            "28800011EAK27GA0000DT00004000001AQ00001"
+            "S28800011EAK27GA0000DT00004000001AQ00001"
         )
 
     def test_create_execute_order_override_order_id(self):
@@ -67,7 +69,7 @@ class TestUtils(unittest.TestCase):
 
         self.assertEqual(
             order,
-            "28800011EXXXXXXXXXXXX00004000001AQ00001"
+            "S28800011EXXXXXXXXXXXX00004000001AQ00001"
         )
 
 
