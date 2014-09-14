@@ -3,9 +3,18 @@ import unittest
 from main import pitch_parser
 
 
-class TestAddOrder(unittest.TestCase):
+class TestPitchParser(unittest.TestCase):
     def test_no_orders(self):
-        result = pitch_parser('empty_data')
+        data = []
+
+        result = pitch_parser(data)
+
+        self.assertDictEqual(result, {})
+
+    def test_add_order(self):
+        data = ["S28800011AAK27GA0000DTS000100SH    0000619200Y"]
+
+        result = pitch_parser(data)
 
         self.assertDictEqual(result, {})
 
